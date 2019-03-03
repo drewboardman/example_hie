@@ -37,6 +37,7 @@ dependencies:
 - lucid
 - blaze-markup
 - warp
+- text
 
 library:
   source-dirs: src

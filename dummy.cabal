@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4fa1dabfbda72f80ef342fea9a3f9b5607c84c43f1e5afb6e183a151f4a90e2e
+-- hash: d4bad5f2b38a54a8b78070d60dcd77db31d0aee20733d5a18ad63e964c71e3c1
 
 name:           dummy
 version:        0.1.0.0
@@ -49,6 +49,7 @@ library
     , servant
     , servant-server
     , string-conversions
+    , text
     , time
     , wai
     , warp
@@ -77,6 +78,7 @@ executable dummy-exe
     , servant
     , servant-server
     , string-conversions
+    , text
     , time
     , wai
     , warp
@@ -106,6 +108,7 @@ test-suite dummy-test
     , servant
     , servant-server
     , string-conversions
+    , text
     , time
     , wai
     , warp
