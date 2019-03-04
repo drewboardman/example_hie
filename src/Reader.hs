@@ -1,33 +1,37 @@
-{-# LANGUAGE OverloadedStrings          #-}
-{-# LANGUAGE ScopedTypeVariables          #-}
+{-# LANGUAGE OverloadedStrings   #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
-module Reader (reader) where
+module Reader
+  ( reader
+  ) where
 
 import qualified Data.Text as T
-import System.IO
+import qualified Data.Text.IO as Tio
+import           System.IO
 
-data UserRole = Admin | Pleb
+data UserRole
+  = Admin
+  | Pleb
 
 data User = User
-  { first :: String
-  , last :: String
-  , role :: UserRole
+  { first    :: String
+  , last     :: String
+  , role     :: UserRole
   , password :: String
   }
 
-
-reader :: FilePath -> IO String
+reader :: FilePath -> IO [User]
 reader filepath = do
-  file <- (readFile filepath :: IO String)
-  let users = (lines file :: [String])
+  file <- Tio.readFile filepath -- one big Text
+  let rows = T.lines file -- split into rows as [Text]
+  let users = map usermaker rows
   undefined
 
-usersmaker :: T.Text -> [User]
-usersmaker row = do
-  _splitted <- T.splitOn "," row
+usermaker :: T.Text -> User
+usermaker row = do
+  let split :: _ = T.splitOn "," row
+  let user = User { first = T.unpack $ split!!0
+                  , last = T.unpack $ split!!1
+                  , role = T.unpack $ split!!2
+                  , password = T.unpack $ split!!3 }
   return $ User "foo" "bar" Pleb "password"
-
-usermaker2 :: T.Text -> User
-usermaker2 row = user where
-  x = T.splitOn "," row
-  user = User "foo" "bar" Pleb "password"
