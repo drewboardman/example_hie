@@ -11,27 +11,33 @@ import           System.IO
 
 data UserRole
   = Admin
-  | Pleb
+  | Pleb deriving (Show)
+
+userRoleFromText :: T.Text -> Maybe UserRole
+userRoleFromText "pleb" = Just Pleb -- can I make this "smarter" with case insensitivity?
+userRoleFromText "admin" = Just Admin
+userRoleFromText _ = Nothing
 
 data User = User
-  { first    :: String
-  , last     :: String
+  { first    :: T.Text
+  , last     :: T.Text
   , role     :: UserRole
-  , password :: String
-  }
+  , password :: T.Text
+  } deriving (Show)
 
 reader :: FilePath -> IO [User]
 reader filepath = do
   file <- Tio.readFile filepath -- one big Text
   let rows = T.lines file -- split into rows as [Text]
-  let users = map usermaker rows
-  undefined
+  return map usermaker rows
 
-usermaker :: T.Text -> User
-usermaker row = do
-  let split :: _ = T.splitOn "," row
-  let user = User { first = T.unpack $ split!!0
-                  , last = T.unpack $ split!!1
-                  , role = T.unpack $ split!!2
-                  , password = T.unpack $ split!!3 }
-  return $ User "foo" "bar" Pleb "password"
+usermaker :: T.Text -> Maybe User
+usermaker row = user where
+  split = T.splitOn "," row -- how do I just put these into the constructor?
+  first' = T.unpack split !! 0
+  last' = T.unpack split !! 1
+  role' = userRoleFromText $ T.unpack $ split !! 2
+  password' = T.unpack split !! 3
+  user =  case role' of
+    Nothing -> Nothing
+    Just realRole -> Just User first' last' realRole password' -- I'd rather just map over role. How to?
