@@ -5,18 +5,19 @@ module Reader
   ( reader
   ) where
 
-import qualified Data.Text as T
+import qualified Data.Text    as T
 import qualified Data.Text.IO as Tio
 import           System.IO
 
 data UserRole
   = Admin
-  | Pleb deriving (Show)
+  | Pleb
+  deriving (Show)
 
 userRoleFromText :: T.Text -> Maybe UserRole
-userRoleFromText "pleb" = Just Pleb -- can I make this "smarter" with case insensitivity?
+userRoleFromText "pleb"  = Just Pleb -- can I make this "smarter" with case insensitivity?
 userRoleFromText "admin" = Just Admin
-userRoleFromText _ = Nothing
+userRoleFromText _       = Nothing
 
 data User = User
   { first    :: T.Text
@@ -33,12 +34,14 @@ reader filepath = do
   return users
 
 usermaker :: T.Text -> Maybe User
-usermaker row = user where
-  split = T.splitOn "," row -- how do I just put these into the constructor?
-  first' = split !! 0
-  last' = split !! 1
-  role' = userRoleFromText $ split !! 2
-  password' = split !! 3
-  user =  case role' of
-    Nothing -> Nothing
-    Just realRole -> Just $ User first' last' realRole password' -- I'd rather just map over role. How to?
+usermaker row = user
+  where
+    split = T.splitOn "," row -- how do I just put these into the constructor?
+    first' = split !! 0
+    last' = split !! 1
+    role' = userRoleFromText $ split !! 2
+    password' = split !! 3
+    user =
+      case role' of
+        Nothing       -> Nothing
+        Just realRole -> Just $ User first' last' realRole password' -- I'd rather just map over role. How to?
