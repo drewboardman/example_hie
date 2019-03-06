@@ -29,15 +29,16 @@ reader :: FilePath -> IO [User]
 reader filepath = do
   file <- Tio.readFile filepath -- one big Text
   let rows = T.lines file -- split into rows as [Text]
-  return map usermaker rows
+  let users = [x | Just x <- map usermaker rows]
+  return users
 
 usermaker :: T.Text -> Maybe User
 usermaker row = user where
   split = T.splitOn "," row -- how do I just put these into the constructor?
-  first' = T.unpack split !! 0
-  last' = T.unpack split !! 1
-  role' = userRoleFromText $ T.unpack $ split !! 2
-  password' = T.unpack split !! 3
+  first' = split !! 0
+  last' = split !! 1
+  role' = userRoleFromText $ split !! 2
+  password' = split !! 3
   user =  case role' of
     Nothing -> Nothing
-    Just realRole -> Just User first' last' realRole password' -- I'd rather just map over role. How to?
+    Just realRole -> Just $ User first' last' realRole password' -- I'd rather just map over role. How to?
